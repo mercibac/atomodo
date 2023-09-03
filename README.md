@@ -17,14 +17,14 @@ Atomic habits technique is used when we have a habit that we want to develop but
 
 ## Installation
 
-Binaries for windows are available on the [release](https://github.com/mercibac/atomodo/releases) page.
+Binaries for Windows are available on the [release](https://github.com/mercibac/atomodo/releases) page.
 
 ## Build from source
 
 ```git clone github.com/mercibac/atomodo.git```
 
 - Open ```Atomodo.dproj``` in RAD Studio
-- Set configuration to Release
+- Set configuration to Release and target Windows 32
 - Build the project
 
 ### Dependencies
