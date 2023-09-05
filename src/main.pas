@@ -7,7 +7,7 @@ uses
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, ShellAPI,
   System.ImageList, System.RegularExpressions, System.DateUtils, System.Diagnostics, SVGIconImageListBase, SVGIconImageList,
   Vcl.ExtCtrls, PngSpeedButton, SVGIconImage, Vcl.ComCtrls, Vcl.TitleBarCtrls, about,
-  Vcl.ImgList, Vcl.Menus, Vcl.Themes, Vcl.Styles, Registry, uLanguages, MMSystem, data, inifiles;
+  Vcl.ImgList, Vcl.Menus, Vcl.Themes, Vcl.Styles, Registry, uLanguages, MMSystem, data, inifiles, SHFolder;
 
 const
 WM_ICONTRAY = WM_USER + 100;
@@ -114,6 +114,7 @@ type
     procedure UpdateImages(Container: TWinControl);
     function isWindowsThemeDark: String;
     procedure Notify;
+    procedure CreateUserConfig;
 
   public
     { Public declarations }
@@ -138,6 +139,10 @@ var
   defaultSystemTheme: string;
   Theme: String;
   IniLanguage: String;
+  ConfigFilePath: string;
+  newFolderPath: PChar;
+  fileHandle: THandle;
+  appDataPath: Pchar;
 
 implementation
 
@@ -147,12 +152,11 @@ implementation
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
-
   // Load configurations
+   if isWindowsThemeDark = 'True' then  defaultSystemTheme := 'Onyx Blue' else defaultSystemTheme := 'Windows';
 
-  if isWindowsThemeDark = 'True' then  defaultSystemTheme := 'Onyx Blue' else defaultSystemTheme := 'Windows';
-
-   IniFile := TIniFile.Create(ChangeFileExt(Application.ExeName, '.ini' ));
+   CreateUserConfig;
+   IniFile := TIniFile.Create(ConfigFilePath);
 
    try
    begin
@@ -229,9 +233,27 @@ begin
   Rounds := 0;
 end;
 
+procedure TMainForm.CreateUserConfig;
+begin
+  GetMem(appDataPath, MAX_PATH);
+  GetMem(newFolderPath, MAX_PATH);
+  SHGetFolderPath(0, CSIDL_LOCAL_APPDATA, 0, 0, appDataPath);
+
+  newFolderPath := PChar(IncludeTrailingPathDelimiter(appDataPath) + 'Atomodo');
+
+  // Create a new folder in the AppData location
+  if not DirectoryExists(newFolderPath) then
+    CreateDir(newFolderPath);
+
+  ConfigFilePath := IncludeTrailingPathDelimiter(newFolderPath) + 'Atomodo.ini';
+  if not FileExists(ConfigFilePath) then
+    fileHandle := CreateFile(PChar(ConfigFilePath), GENERIC_WRITE, 0, nil, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, 0);
+
+end;
+
 procedure TMainForm.ApplySettings;
- begin
-   IniFile := TIniFile.Create( ChangeFileExt( Application.ExeName, '.ini' ) );
+begin
+   IniFile := TIniFile.Create(ConfigFilePath);
    try
      IniFile.WriteString( 'Settings', 'Theme', cbbTheme.Text);
      IniFile.WriteString( 'Settings', 'Sound', cbbSound.Text);
@@ -243,7 +265,7 @@ end;
 
 procedure TMainForm.localize;
 var
-  I, CbbIndex: Integer;
+  CbbIndex: Integer;
 begin
   cbbIndex := cbbTheme.ItemIndex;
   case (cbbLanguage.ItemIndex) of
