@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.Types, Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, ShellAPI,
   System.ImageList, System.RegularExpressions, System.DateUtils, System.Diagnostics, SVGIconImageListBase, SVGIconImageList,
-  Vcl.ExtCtrls, PngSpeedButton, SVGIconImage, Vcl.ComCtrls, Vcl.TitleBarCtrls, about,
+  Vcl.ExtCtrls, SVGIconImage, Vcl.ComCtrls, Vcl.TitleBarCtrls, about,
   Vcl.ImgList, Vcl.Menus, Vcl.Themes, Vcl.Styles, Registry, uLanguages, MMSystem, data, inifiles, SHFolder;
 
 const
@@ -92,6 +92,8 @@ type
     procedure cbbSoundCloseUp(Sender: TObject);
     procedure cbbLanguageCloseUp(Sender: TObject);
     procedure cbbSoundChange(Sender: TObject);
+    procedure cbbBreakChange(Sender: TObject);
+    procedure cbbBreakEnter(Sender: TObject);
 
 
   private
@@ -143,6 +145,7 @@ var
   newFolderPath: PChar;
   fileHandle: THandle;
   appDataPath: Pchar;
+  currentBreak: string;
 
 implementation
 
@@ -231,6 +234,7 @@ begin
   lblLanguage.Caption := UtilModule.Language.localize('Language');
 
   Rounds := 0;
+  currentBreak := cbbBreak.Text;
 end;
 
 procedure TMainForm.CreateUserConfig;
@@ -627,7 +631,7 @@ end;
 procedure TMainForm.btnStartClick(Sender: TObject);
 begin
 
-  if btnPause.Enabled = True then
+  if btnPause.Enabled and btnRepeat.Enabled = True then
     btnRepeat.ImageIndex := btnRepeat.ImageIndex + 5;
   btnStart.Enabled := False;
   btnStart.ImageIndex := 6;
@@ -681,6 +685,9 @@ begin
   begin
     newItems := TStringList.Create;
     newItems.Add('2 ATO +');
+    btnRepeat.ImageIndex := 11;
+    btnRepeat.Enabled := True;
+    Rounds := 0;
     newItems.Add('None');
     cbbBreak.Items := newItems;
     cbbBreak.ItemIndex := 0;
@@ -690,6 +697,9 @@ begin
   begin
     newItems := TStringList.Create;
     newItems.Add('None');
+    btnRepeat.ImageIndex := 16;
+    btnRepeat.Enabled := False;
+    Rounds := 0;
     cbbBreak.Items := newItems;
     cbbBreak.ItemIndex := 0;
   end;
@@ -699,14 +709,39 @@ begin
     newItems := TStringList.Create;
     newItems.Add('5 POMO');
     newItems.Add('10 POMO +');
+    btnRepeat.ImageIndex := 11;
+    btnRepeat.Enabled := True;
+    Rounds := 0;
     cbbBreak.Items := newItems;
     cbbBreak.ItemIndex := 0;
   end;
 end;
 
+procedure TMainForm.cbbBreakChange(Sender: TObject);
+begin
+  if cbbBreak.Text = 'None' then
+  begin
+    btnRepeat.ImageIndex := 16;
+    btnRepeat.Enabled := False;
+    Rounds := 0;
+  end
+  else if (CurrentBreak = 'None') and (cbbBreak.Text <> 'None') then
+  begin
+    btnRepeat.ImageIndex := 11;
+    btnRepeat.Enabled := Enabled;
+    Rounds := 0;
+  end;
+
+end;
+
 procedure TMainForm.cbbBreakCloseUp(Sender: TObject);
 begin
   MainForm.ActiveControl := nil;
+end;
+
+procedure TMainForm.cbbBreakEnter(Sender: TObject);
+begin
+  currentBreak := cbbBreak.Text;
 end;
 
 procedure TMainForm.cbbDurationCloseUp(Sender: TObject);

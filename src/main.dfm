@@ -244,7 +244,9 @@ object MainForm: TMainForm
           ParentFont = False
           TabOrder = 1
           Text = '5 POMO'
+          OnChange = cbbBreakChange
           OnCloseUp = cbbBreakCloseUp
+          OnEnter = cbbBreakEnter
           Items.Strings = (
             '2 ATO +'
             '5 POMO'
