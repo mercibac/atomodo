@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.Types, Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, ShellAPI,
   System.ImageList, System.RegularExpressions, System.DateUtils, System.Diagnostics, SVGIconImageListBase, SVGIconImageList,
-  Vcl.ExtCtrls, SVGIconImage, Vcl.ComCtrls, Vcl.TitleBarCtrls, about,
+  Vcl.ExtCtrls, SVGIconImage, Vcl.ComCtrls, Vcl.TitleBarCtrls, about, Vcl.MPlayer,
   Vcl.ImgList, Vcl.Menus, Vcl.Themes, Vcl.Styles, Registry, uLanguages, MMSystem, data, inifiles, SHFolder;
 
 const
@@ -57,6 +57,7 @@ type
     Show1: TMenuItem;
     Quit1: TMenuItem;
     TrayIcon: TTrayIcon;
+    MediaPlayer: TMediaPlayer;
     procedure btnAboutClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure WMMouseMove(var Msg : TWMMouseMove); message WM_MOUSEMOVE;
@@ -115,12 +116,13 @@ type
     procedure ApplySettings;
     procedure UpdateImages(Container: TWinControl);
     function isWindowsThemeDark: String;
-    procedure Notify;
+    procedure PlayMP3FromResource;
     procedure CreateUserConfig;
 
   public
     { Public declarations }
     procedure localize;
+   procedure MakeVisible;
 
   end;
 
@@ -150,6 +152,14 @@ var
 implementation
 
 {$R *.dfm}
+
+
+procedure TMainForm.MakeVisible;
+begin
+if MainForm.Visible = False then MainForm.Visible := True;
+MainForm.BringToFront;
+end;
+
 
 { ------------- UI PROCEDURES ------------- }
 
@@ -511,7 +521,7 @@ begin
 
         if (TStyleManager.ActiveStyle.Name = 'Windows') then
             lblTime.Font.Color := clBlack else lblTime.Font.Color := clWhite;
-        Notify;
+        PlayMP3FromResource;
     end;
 
 
@@ -545,7 +555,7 @@ begin
         lblTime.Font.Color := clRed;
 
         if (lblTime.Caption = '00:12') then
-          Notify;
+          PlayMP3FromResource;
 
         if (lblTime.Caption = '00:00') then
         begin
@@ -562,11 +572,30 @@ begin
 
 end;
 
-procedure TMainForm.Notify;
-begin
-  PlaySound(nil, 0, 0);
-  PlaySound(PChar(cbbSound.Text), 0, SND_RESOURCE or SND_ASYNC);
 
+procedure TMainForm.PlayMP3FromResource;
+var
+  ResStream: TResourceStream;
+  TempFile: string;
+begin
+  // Load the MP3 file from the resource
+  ResStream := TResourceStream.Create(HInstance, PChar(cbbSound.Text), RT_RCDATA);
+  try
+    // Save the MP3 file to a temporary location
+    TempFile := PChar(IncludeTrailingPathDelimiter(appDataPath) + 'Atomodo') + '\' + PChar(cbbSound.Text) + '.mp3';
+
+    if not FileExists(TempFile) then
+    ResStream.SaveToFile(TempFile);
+  finally
+    ResStream.Free;
+  end;
+
+  // Play the MP3 file using TMediaPlayer
+  MediaPlayer.FileName := TempFile;
+  if MediaPlayer.Mode = mpPlaying then
+    MediaPlayer.Stop;
+  MediaPlayer.Open;
+  MediaPlayer.Play;
 end;
 
 procedure TMainForm.TrayIconClick(Sender: TObject);
@@ -582,14 +611,14 @@ end;
 
 procedure TMainForm.btnBackClick(Sender: TObject);
 begin
-  PlaySound(nil, 0, 0);
+  MediaPlayer.Stop;
   tbMain.Show;
 end;
 
 procedure TMainForm.btnConfirmClick(Sender: TObject);
 begin
   ApplySettings;
-  PlaySound(nil, 0, 0);
+  MediaPlayer.Stop;
   tbMain.Show;
 end;
 
@@ -766,7 +795,7 @@ end;
 
 procedure TMainForm.cbbSoundChange(Sender: TObject);
 begin
-  Notify;
+  PlayMP3FromResource;
 end;
 
 procedure TMainForm.cbbSoundCloseUp(Sender: TObject);

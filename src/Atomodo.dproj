@@ -143,15 +143,15 @@
             <ResourceType>RCDATA</ResourceType>
             <ResourceId>language_rc</ResourceId>
         </RcItem>
-        <RcItem Include="assets\Bell.wav">
+        <RcItem Include="assets\Atmo.mp3">
             <ContainerId>ResourceItem</ContainerId>
-            <ResourceType>WAVE</ResourceType>
-            <ResourceId>Classic</ResourceId>
-        </RcItem>
-        <RcItem Include="assets\Atmo.wav">
-            <ContainerId>ResourceItem</ContainerId>
-            <ResourceType>WAVE</ResourceType>
+            <ResourceType>RCDATA</ResourceType>
             <ResourceId>Atmo</ResourceId>
+        </RcItem>
+        <RcItem Include="assets\Bell.mp3">
+            <ContainerId>ResourceItem</ContainerId>
+            <ResourceType>RCDATA</ResourceType>
+            <ResourceId>Classic</ResourceId>
         </RcItem>
         <BuildConfiguration Include="Base">
             <Key>Base</Key>
@@ -192,13 +192,13 @@
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="assets\Atmo.wav" Configuration="Release" Class="ProjectFile">
+                <DeployFile LocalName="assets\Atmo.mp3" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>
                     </Platform>
                 </DeployFile>
-                <DeployFile LocalName="assets\Bell.wav" Configuration="Release" Class="ProjectFile">
+                <DeployFile LocalName="assets\Bell.mp3" Configuration="Release" Class="ProjectFile">
                     <Platform Name="Win32">
                         <RemoteDir>.\</RemoteDir>
                         <Overwrite>true</Overwrite>

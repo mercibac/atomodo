@@ -282,6 +282,16 @@ object MainForm: TMainForm
             ExplicitHeight = 41
           end
         end
+        object MediaPlayer: TMediaPlayer
+          Left = 104
+          Top = 296
+          Width = 253
+          Height = 30
+          DoubleBuffered = True
+          Visible = False
+          ParentDoubleBuffered = False
+          TabOrder = 3
+        end
       end
       object tbSettings: TTabSheet
         Caption = 'tbSettings'
