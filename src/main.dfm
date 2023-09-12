@@ -54,7 +54,7 @@ object MainForm: TMainForm
       Top = 0
       Width = 453
       Height = 300
-      ActivePage = tbMain
+      ActivePage = tbSettings
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
