@@ -54,7 +54,7 @@ object MainForm: TMainForm
       Top = 0
       Width = 453
       Height = 300
-      ActivePage = tbSettings
+      ActivePage = tbMain
       Align = alClient
       Style = tsFlatButtons
       TabOrder = 0
@@ -85,7 +85,7 @@ object MainForm: TMainForm
           ParentFont = False
         end
         object lblBreak: TLabel
-          Left = 336
+          Left = 328
           Top = 75
           Width = 47
           Height = 21
@@ -98,7 +98,7 @@ object MainForm: TMainForm
           ParentFont = False
         end
         object lblDuration: TLabel
-          Left = 53
+          Left = 45
           Top = 75
           Width = 68
           Height = 21

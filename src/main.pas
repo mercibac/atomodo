@@ -14,10 +14,10 @@ WM_ICONTRAY = WM_USER + 100;
 
 
 type
-  // Get rid of dots on combobox selection
-  TComboBox = class(Vcl.StdCtrls.TComboBox)   // Temporary subclass to get at the CNDraw message.
-  private
-    procedure CNDrawItem(var Message : TWMDrawItem); message CN_DRAWITEM;
+  // Subclass TComboBox to center its text
+  TComboBox = class(Vcl.StdCtrls.TComboBox)
+  protected
+    procedure DrawItem(Index: Integer; Rect: TRect; State: TOwnerDrawState); override;
 
   end;
 
@@ -122,7 +122,6 @@ type
   public
     { Public declarations }
     procedure localize;
-   procedure MakeVisible;
 
   end;
 
@@ -154,12 +153,24 @@ implementation
 {$R *.dfm}
 
 
-procedure TMainForm.MakeVisible;
+procedure TComboBox.DrawItem(Index: Integer; Rect: TRect; State: TOwnerDrawState);
+var
+  Text: string;
+  TextRect: TRect;
+  OffsetX: Integer;
 begin
-if MainForm.Visible = False then MainForm.Visible := True;
-MainForm.BringToFront;
-end;
+  if Index >= 0 then
+  begin
+    Text := Items[Index];
+    Canvas.FillRect(Rect);
 
+    TextRect := Rect;
+    Canvas.TextRect(TextRect, Text, [tfCenter, tfVerticalCenter, tfSingleLine]);
+
+    if odFocused in State then
+      Canvas.DrawFocusRect(Rect);
+  end;
+end;
 
 { ------------- UI PROCEDURES ------------- }
 
@@ -338,15 +349,6 @@ begin
     end;
   end;
 end;
-
-
-procedure TComboBox.CNDrawItem(var Message : TWMDrawItem);
-begin
-  with Message do
-    DrawItemStruct.itemState := DrawItemStruct.itemState and not ODS_FOCUS;
-  inherited;
-
-end; {CNDrawItem}
 
 procedure TMainForm.pnlMainMouseDown(Sender: TObject; Button: TMouseButton;
   Shift: TShiftState; X, Y: Integer);
