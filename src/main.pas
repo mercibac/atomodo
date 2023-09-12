@@ -611,14 +611,20 @@ end;
 
 procedure TMainForm.btnBackClick(Sender: TObject);
 begin
-  MediaPlayer.Stop;
+  if MediaPlayer.Mode = mpPlaying then
+  begin
+    MediaPlayer.Stop;
+  end;
   tbMain.Show;
 end;
 
 procedure TMainForm.btnConfirmClick(Sender: TObject);
 begin
+  if MediaPlayer.Mode = mpPlaying then
+  begin
+    MediaPlayer.Stop;
+  end;
   ApplySettings;
-  MediaPlayer.Stop;
   tbMain.Show;
 end;
 
