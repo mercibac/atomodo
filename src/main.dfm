@@ -89,6 +89,7 @@ object MainForm: TMainForm
           Top = 75
           Width = 47
           Height = 21
+          Alignment = taCenter
           Caption = 'Break'
           Font.Charset = DEFAULT_CHARSET
           Font.Color = clWindowText
@@ -96,19 +97,7 @@ object MainForm: TMainForm
           Font.Name = 'Inter'
           Font.Style = []
           ParentFont = False
-        end
-        object lblDuration: TLabel
-          Left = 44
-          Top = 75
-          Width = 68
-          Height = 21
-          Caption = 'Duration'
-          Font.Charset = DEFAULT_CHARSET
-          Font.Color = clWindowText
-          Font.Height = -18
-          Font.Name = 'Inter'
-          Font.Style = []
-          ParentFont = False
+          Layout = tlCenter
         end
         object btnStart: TSpeedButton
           Left = 203
@@ -194,6 +183,22 @@ object MainForm: TMainForm
           Images = UtilModule.SVGIconImageList1
           Flat = True
           OnClick = btnRepeatClick
+        end
+        object lblDuration: TLabel
+          Left = 24
+          Top = 75
+          Width = 113
+          Height = 22
+          Alignment = taCenter
+          AutoSize = False
+          Caption = 'Duration'
+          Font.Charset = DEFAULT_CHARSET
+          Font.Color = clWindowText
+          Font.Height = -18
+          Font.Name = 'Tahoma'
+          Font.Style = []
+          ParentFont = False
+          Layout = tlCenter
         end
         object cbbDuration: TComboBox
           Left = 23
@@ -323,7 +328,7 @@ object MainForm: TMainForm
         object lblTheme: TLabel
           Left = 21
           Top = 88
-          Width = 120
+          Width = 101
           Height = 22
           Alignment = taCenter
           AutoSize = False
@@ -337,7 +342,7 @@ object MainForm: TMainForm
           Layout = tlCenter
         end
         object lblSound: TLabel
-          Left = 163
+          Left = 157
           Top = 88
           Width = 120
           Height = 22
@@ -353,9 +358,9 @@ object MainForm: TMainForm
           Layout = tlCenter
         end
         object lblLanguage: TLabel
-          Left = 312
+          Left = 309
           Top = 88
-          Width = 120
+          Width = 108
           Height = 22
           Alignment = taCenter
           AutoSize = False

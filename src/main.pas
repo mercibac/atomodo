@@ -23,7 +23,6 @@ type
 
   TMainForm = class(TForm)
     btnStart: TSpeedButton;
-    lblDuration: TLabel;
     lblBreak: TLabel;
     lblTitle: TLabel;
     btnStop: TSpeedButton;
@@ -58,6 +57,7 @@ type
     Quit1: TMenuItem;
     TrayIcon: TTrayIcon;
     MediaPlayer: TMediaPlayer;
+    lblDuration: TLabel;
     procedure btnAboutClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);
     procedure WMMouseMove(var Msg : TWMMouseMove); message WM_MOUSEMOVE;
