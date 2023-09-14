@@ -77,3 +77,4 @@ justfile
 # Realease folders
 Win32/
 Win64/
+MacOS/
