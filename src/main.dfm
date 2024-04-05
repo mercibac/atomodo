@@ -37,6 +37,7 @@ object MainForm: TMainForm
   Position = poScreenCenter
   StyleElements = [seFont, seClient]
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   TextHeight = 13
   object pnlMain: TPanel
     Left = 0

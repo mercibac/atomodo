@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, System.Types, Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, ShellAPI,
   System.ImageList, System.RegularExpressions, System.DateUtils, System.Diagnostics, SVGIconImageListBase, SVGIconImageList,
-  Vcl.ExtCtrls, SVGIconImage, Vcl.ComCtrls, Vcl.TitleBarCtrls, about, Vcl.MPlayer,
+  Vcl.ExtCtrls, SVGIconImage, Vcl.ComCtrls, Vcl.TitleBarCtrls, about, Vcl.MPlayer, System.Notification,
   Vcl.ImgList, Vcl.Menus, Vcl.Themes, Vcl.Styles, Registry, uLanguages, MMSystem, data, inifiles, SHFolder;
 
 const
@@ -95,6 +95,7 @@ type
     procedure cbbSoundChange(Sender: TObject);
     procedure cbbBreakChange(Sender: TObject);
     procedure cbbBreakEnter(Sender: TObject);
+    procedure FormDestroy(Sender: TObject);
 
 
   private
@@ -122,6 +123,7 @@ type
   public
     { Public declarations }
     procedure localize;
+    procedure SystemNotifify(Message: string);
 
   end;
 
@@ -147,6 +149,7 @@ var
   fileHandle: THandle;
   appDataPath: Pchar;
   currentBreak: string;
+  NotificationCenter: TNotificationCenter;
 
 implementation
 
@@ -176,6 +179,9 @@ end;
 
 procedure TMainForm.FormCreate(Sender: TObject);
 begin
+
+  // Create an instance of TNotificationCenter
+  NotificationCenter := TNotificationCenter.Create(nil);
   // Load configurations
    if isWindowsThemeDark = 'True' then  defaultSystemTheme := 'Onyx Blue' else defaultSystemTheme := 'Windows';
 
@@ -256,6 +262,11 @@ begin
 
   Rounds := 0;
   currentBreak := cbbBreak.Text;
+end;
+
+procedure TMainForm.FormDestroy(Sender: TObject);
+begin
+  NotificationCenter.Free;
 end;
 
 procedure TMainForm.CreateUserConfig;
@@ -502,8 +513,18 @@ end;
 
 { ------------- FONCTIONNAL PROCEDURES ------------- }
 
-procedure TMainForm.TimerSession(Sender: TObject);
+procedure TMainForm.SystemNotifify(Message: String);
+var
+  Notification: TNotification;
+begin
+    Notification := NotificationCenter.CreateNotification;
+    Notification.Name := 'AtomodoNotifier';
+    Notification.Title := 'Atomodo';
+    Notification.AlertBody := Message;
+    NotificationCenter.PresentNotification(Notification);
+end;
 
+procedure TMainForm.TimerSession(Sender: TObject);
 begin
 
   if TimerActive and (rounds >= 0) then
@@ -523,6 +544,7 @@ begin
 
         if (TStyleManager.ActiveStyle.Name = 'Windows') then
             lblTime.Font.Color := clBlack else lblTime.Font.Color := clWhite;
+        SystemNotifify('It''s time to take a break');
         PlayMP3FromResource;
     end;
 
@@ -531,6 +553,7 @@ begin
     begin
       TimerActive := False;
       TimerBreakActive := True;
+//      if MediaPlayer.Mode = mpPlaying then MediaPlayer.Stop;
 
       if cbbBreak.Text <> 'None' then
       begin
@@ -557,7 +580,10 @@ begin
         lblTime.Font.Color := clRed;
 
         if (lblTime.Caption = '00:12') then
+        begin
+          SystemNotifify('It''s time to take a get back to work');
           PlayMP3FromResource;
+        end;
 
         if (lblTime.Caption = '00:00') then
         begin
@@ -691,6 +717,7 @@ begin
   begin
     btnRepeat.Enabled := True;
     btnRepeat.ImageIndex := btnRepeat.ImageIndex - 5;
+    if MediaPlayer.Mode = mpPlaying then MediaPlayer.Stop;
   end;
 
   if (TStyleManager.ActiveStyle.Name = 'Windows') then
@@ -746,6 +773,7 @@ begin
     newItems := TStringList.Create;
     newItems.Add('5 POMO');
     newItems.Add('10 POMO +');
+    newItems.Add('None');
     btnRepeat.ImageIndex := 11;
     btnRepeat.Enabled := True;
     Rounds := 0;
